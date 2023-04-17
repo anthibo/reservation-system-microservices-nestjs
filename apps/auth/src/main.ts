@@ -5,17 +5,30 @@ import * as cookieParser from 'cookie-parser';
 
 import { AuthModule } from './auth.module';
 import { ConfigService } from '@nestjs/config';
+import { Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const app = await NestFactory.create(AuthModule);
+  const configService = app.get(ConfigService);
+
+  const tcpPort = configService.get('TCP_PORT');
+
+  app.connectMicroservice({
+    transport: Transport.TCP,
+    options: {
+      host: '0.0.0.0',
+      port: tcpPort,
+    },
+  });
 
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.useLogger(app.get(Logger));
 
-  const configService = app.get(ConfigService);
-  const port = configService.get('PORT');
+  const httpPort = configService.get('HTTP_PORT');
 
-  await app.listen(port);
+  await app.startAllMicroservices();
+
+  await app.listen(httpPort);
 }
 bootstrap();
