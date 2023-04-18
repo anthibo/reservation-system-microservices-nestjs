@@ -12,7 +12,7 @@ import { PaymentsService } from './payments.service';
       isGlobal: true,
       validationSchema: Joi.object({
         PORT: Joi.number().required(),
-        STRIPE_SECRET_KEY: Joi.number().required(),
+        STRIPE_SECRET_KEY: Joi.string().required(),
       }),
     }),
     LoggerModule,
