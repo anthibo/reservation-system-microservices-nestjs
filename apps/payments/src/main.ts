@@ -10,7 +10,6 @@ async function bootstrap() {
   const app = await NestFactory.create(PaymentsModule);
   const configService = app.get(ConfigService);
   const port = configService.get('PORT');
-  console.log(`payments service port: ${port}`);
 
   app.connectMicroservice({
     transport: Transport.GRPC,
