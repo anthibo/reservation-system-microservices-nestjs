@@ -32,6 +32,9 @@ services:
     command: yarn start:dev payments
     env_file:
       - ./apps/payments/.env
+    # to test grpc connection in localhost 
+    ports:
+      - '3003:3003'
     volumes:
     - .:/usr/src/app
 

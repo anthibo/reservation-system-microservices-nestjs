@@ -1,10 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
-import { CreateChargeDto } from '../../../libs/common/src/dto/create-charge.dto';
-import { NOTIFICATIONS_SERVICE } from '@app/common';
-import { ClientProxy } from '@nestjs/microservices';
-import { PaymentsCreateChargeDto } from './dto/payments-create-charge.dto';
+
+import { NOTIFICATIONS_SERVICE, PaymentsCreateChargeDto } from '@app/common';
 
 @Injectable()
 export class PaymentsService {
