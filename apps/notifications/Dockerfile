@@ -10,7 +10,7 @@ COPY nest-cli.json nest-cli.json
 COPY apps/notifications apps/notifications
 COPY libs libs
 
-RUN yarn -r
+RUN yarn && cd apps/notifications && yarn
 
 RUN yarn build notifications
 

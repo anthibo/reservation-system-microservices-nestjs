@@ -10,7 +10,7 @@ COPY nest-cli.json nest-cli.json
 COPY apps/auth apps/auth
 COPY libs libs
 
-RUN yarn -r
+RUN yarn && cd apps/auth && yarn
 
 RUN yarn build auth
 

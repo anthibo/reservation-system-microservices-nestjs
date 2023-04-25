@@ -10,7 +10,7 @@ COPY nest-cli.json nest-cli.json
 COPY apps/reservations apps/reservations
 COPY libs libs
 
-RUN yarn -r
+RUN yarn
 
 RUN yarn build reservations
 

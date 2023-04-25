@@ -10,7 +10,7 @@ COPY nest-cli.json nest-cli.json
 COPY apps/payments apps/payments
 COPY libs libs
 
-RUN yarn -r
+RUN yarn && cd apps/payments && yarn
 
 RUN yarn build payments
 
