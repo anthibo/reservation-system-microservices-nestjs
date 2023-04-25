@@ -3,16 +3,16 @@ FROM node:alpine As development
 WORKDIR /usr/src/app
 
 COPY package.json ./
-
 COPY yarn.lock ./
+COPY tsconfig.json tsconfig.json
+COPY nest-cli.json nest-cli.json
 
-# RUN npm i -g yarn
+COPY apps/notifications apps/notifications
+COPY libs libs
 
-RUN yarn
+RUN yarn -r
 
-COPY . .
-
-RUN yarn build
+RUN yarn build notifications
 
 FROM node:alpine as production 
 
@@ -24,8 +24,6 @@ WORKDIR /usr/src/app
 COPY package.json ./
 
 COPY yarn.lock ./
-
-# RUN npm i -g yarn
 
 RUN yarn --prod
 
