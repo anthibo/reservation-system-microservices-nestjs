@@ -34,3 +34,4 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 .env
+k8s/reservation-microservices/reservation-system-384520-2d2ef662b751.json
