@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: reservation-service
+  name: reservation-service
+spec:
+  ports:
+  - name: "http"
+    port: 3004
+    protocol: TCP
+    targetPort: 3004
+  selector:
+    app: reservation-service
+  type: NodePort

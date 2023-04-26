@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: auth-service
+  name: auth-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+      - image: europe-west8-docker.pkg.dev/reservation-system-384520/auth-service/tcp-version
+        name: auth
+        env:
+          - name: MONGODB_URI
+            valueFrom:
+              secretKeyRef:
+                name: mongodb
+                key: connectionString
+          - name: JWT_SECRET
+            valueFrom:
+             secretKeyRef:
+              name: jwt
+              key: jwtSecret
+          - name: JWT_EXPIRATION
+            value: '3600'
+          - name: TCP_PORT
+            value: '3002'
+          - name: HTTP_PORT
+            value: '3003'
+        ports:
+          - containerPort: 3002
+          - containerPort: 3003
