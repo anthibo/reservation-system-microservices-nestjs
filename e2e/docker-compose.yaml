@@ -1,0 +1,39 @@
+services:
+  e2e:
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    volumes:
+      - ./specs:/usr/src/app/specs
+    depends_on:
+      - reservations
+      - auth
+      - payments
+      - notifications
+      - mongo
+  reservations:
+    image: europe-west8-docker.pkg.dev/reservation-system-384520/reservation-service/tcp-version:latest
+    env_file:
+      - ../apps/reservations/.env
+    ports:
+      - '3000:3000'
+  auth:
+    image: europe-west8-docker.pkg.dev/reservation-system-384520/auth-service/tcp-version:latest
+    env_file:
+      - ../apps/auth/.env
+    ports:
+      - '3001:3001'
+  payments:
+    image: europe-west8-docker.pkg.dev/reservation-system-384520/payments-service/tcp-version:latest
+    ports:
+      - '3003:3003'
+    env_file:
+      - ../apps/payments/.env
+  notifications:
+    image: europe-west8-docker.pkg.dev/reservation-system-384520/notifications-service/tcp-version:latest
+    ports:
+      - '3004:3004'
+    env_file:
+      - ../apps/notifications/.env
+  mongo:
+    image: mongo
