@@ -15,7 +15,7 @@ spec:
         app: notifications-service
     spec:
       containers:
-      - image: europe-west8-docker.pkg.dev/reservation-system-384520/notifications-service/tcp-version
+      - image: europe-west8-docker.pkg.dev/reservation-system-384520/notifications-service/tcp-production
         name: notifications
         env:
           - name: PORT
