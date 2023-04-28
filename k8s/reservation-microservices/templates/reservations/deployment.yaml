@@ -15,7 +15,7 @@ spec:
         app: reservation-service
     spec:
       containers:
-      - image: europe-west8-docker.pkg.dev/reservation-system-384520/reservation-service/tcp-production
+      - image: europe-west8-docker.pkg.dev/reservation-system-384520/reservation-service/grpc-production
         name: reservations
         env:
           - name: MONGODB_URI

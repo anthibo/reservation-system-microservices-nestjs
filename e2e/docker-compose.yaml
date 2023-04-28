@@ -12,7 +12,7 @@ services:
       - notifications
       - mongo
   reservations:
-    image: europe-west8-docker.pkg.dev/reservation-system-384520/reservation-service/tcp-production:latest
+    image: europe-west8-docker.pkg.dev/reservation-system-384520/reservation-service/grpc-production:latest
     env_file:
       - ../apps/reservations/.env
     ports:
@@ -24,7 +24,7 @@ services:
     ports:
       - '3001:3001'
   payments:
-    image: europe-west8-docker.pkg.dev/reservation-system-384520/payments-service/tcp-production:latest
+    image: europe-west8-docker.pkg.dev/reservation-system-384520/payments-service/grpc-production:latest
     ports:
       - '3003:3003'
     env_file:
