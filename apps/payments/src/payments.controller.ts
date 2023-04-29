@@ -1,9 +1,9 @@
 import { Controller, Logger, UsePipes, ValidationPipe } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { PaymentsCreateChargeDto } from '@app/common';
-import { PAYMENTS_PROTO_SERVICE } from '@app/common/proto';
 
 import { PaymentsService } from './payments.service';
+import { PAYMENTS_PROTO_SERVICE } from './proto';
 
 @Controller()
 export class PaymentsController {

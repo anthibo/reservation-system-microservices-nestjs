@@ -12,13 +12,14 @@ import {
   LoggerModule,
   PAYMENTS_SERVICE,
 } from '@app/common';
-import { PAYMENTS_PROTO_PACKAGE, PAYMENTS_PROTO_PATH } from '@app/common/proto';
 
 import { ReservationsRepository } from './reservations.repository';
 import {
   ReservationDocument,
   ReservationSchema,
 } from './models/reservation.schema';
+import { PAYMENTS_PROTO_PACKAGE } from './proto';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -60,7 +61,7 @@ import {
               'PAYMENTS_PORT',
             )}`,
             package: PAYMENTS_PROTO_PACKAGE,
-            protoPath: PAYMENTS_PROTO_PATH,
+            protoPath: join(__dirname, './proto/payments/payments.proto'),
             loader: {
               keepCase: true,
               longs: Number,

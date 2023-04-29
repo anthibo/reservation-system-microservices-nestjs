@@ -1,22 +1,12 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { ClientGrpc } from '@nestjs/microservices';
+import { map } from 'rxjs';
+
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { ReservationsRepository } from './reservations.repository';
 import { PAYMENTS_SERVICE, UserDto } from '@app/common';
-import {
-  Client,
-  ClientGrpc,
-  ClientGrpcProxy,
-  ClientProxy,
-  Transport,
-} from '@nestjs/microservices';
-import { Observable, map } from 'rxjs';
-import {
-  PAYMENTS_PROTO_PACKAGE,
-  PAYMENTS_PROTO_PATH,
-  PaymentsService,
-} from '@app/common/proto';
-import { ConfigService } from '@nestjs/config';
+import { PaymentsGRPCService } from './proto';
 
 @Injectable()
 export class ReservationsService implements OnModuleInit {
@@ -25,7 +15,7 @@ export class ReservationsService implements OnModuleInit {
     @Inject(PAYMENTS_SERVICE) private readonly grpcClient: ClientGrpc,
   ) {}
 
-  private paymentsService: PaymentsService;
+  private paymentsService: PaymentsGRPCService;
 
   onModuleInit() {
     this.paymentsService = this.grpcClient.getService('PaymentsService');

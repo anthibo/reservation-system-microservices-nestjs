@@ -3,8 +3,9 @@ import { PaymentsModule } from './payments.module';
 import { Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from 'nestjs-pino';
-import { PAYMENTS_PROTO_PATH, PAYMENTS_PROTO_PACKAGE } from '@app/common/proto';
 import { number } from 'joi';
+import { PAYMENTS_PROTO_PACKAGE } from './proto';
+import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create(PaymentsModule);
@@ -16,7 +17,7 @@ async function bootstrap() {
     options: {
       url: `0.0.0.0:${port}`,
       package: PAYMENTS_PROTO_PACKAGE,
-      protoPath: PAYMENTS_PROTO_PATH,
+      protoPath: join(__dirname, './proto/payments/payments.proto'),
       loader: {
         keepCase: true,
         longs: Number,
