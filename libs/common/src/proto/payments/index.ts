@@ -5,7 +5,10 @@ export * from './payments.service.interface';
 let payment_proto_path = 'libs/common/src/proto/payments/payments.proto';
 
 if (process.env.NODE_ENV === 'production') {
-  payment_proto_path = path.resolve(__dirname, 'payments.proto');
+  payment_proto_path = path.resolve(
+    __dirname,
+    '../../proto/payments/payments.proto',
+  );
 }
 
 export const PAYMENTS_PROTO_PATH = payment_proto_path;
