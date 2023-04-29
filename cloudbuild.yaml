@@ -5,14 +5,14 @@ steps:
       [
         'build',
         '-t',
-        'europe-west8-docker.pkg.dev/reservation-system-384520/reservation-service/tcp-production',
+        'europe-west8-docker.pkg.dev/reservation-system-384520/reservation-service/grpc-production',
         '-f',
         'apps/reservations/Dockerfile',
         '.',
       ]
   - name: 'gcr.io/cloud-builders/docker'
     args:
-      ['push', 'europe-west8-docker.pkg.dev/reservation-system-384520/reservation-service/tcp-production']
+      ['push', 'europe-west8-docker.pkg.dev/reservation-system-384520/reservation-service/grpc-production']
 
   # Auth
   - name: 'gcr.io/cloud-builders/docker'
@@ -49,10 +49,10 @@ steps:
       [
         'build',
         '-t',
-        'europe-west8-docker.pkg.dev/reservation-system-384520/payments-service/tcp-production',
+        'europe-west8-docker.pkg.dev/reservation-system-384520/payments-service/grpc-production',
         '-f',
         'apps/payments/Dockerfile',
         '.',
       ]
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'europe-west8-docker.pkg.dev/reservation-system-384520/payments-service/tcp-production']
+    args: ['push', 'europe-west8-docker.pkg.dev/reservation-system-384520/payments-service/grpc-production']

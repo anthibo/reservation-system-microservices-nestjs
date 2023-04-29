@@ -12,11 +12,14 @@ import {
   LoggerModule,
   PAYMENTS_SERVICE,
 } from '@app/common';
+
 import { ReservationsRepository } from './reservations.repository';
 import {
   ReservationDocument,
   ReservationSchema,
 } from './models/reservation.schema';
+import { PAYMENTS_PROTO_PACKAGE } from './proto';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -52,10 +55,22 @@ import {
       {
         name: PAYMENTS_SERVICE,
         useFactory: (configService: ConfigService) => ({
-          transport: Transport.TCP,
+          transport: Transport.GRPC,
           options: {
-            host: configService.get('PAYMENTS_HOST'),
-            port: configService.get('PAYMENTS_PORT'),
+            url: `${configService.get('PAYMENTS_HOST')}:${configService.get(
+              'PAYMENTS_PORT',
+            )}`,
+            package: PAYMENTS_PROTO_PACKAGE,
+            protoPath: join(__dirname, './proto/payments/payments.proto'),
+            loader: {
+              keepCase: true,
+              longs: Number,
+              enums: String,
+              defaults: true,
+              oneofs: true,
+              objects: true,
+              json: true,
+            },
           },
         }),
         inject: [ConfigService],

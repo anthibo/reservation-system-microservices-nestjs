@@ -1,18 +1,20 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
-import { NOTIFICATIONS_SERVICE } from '@app/common';
-import { ClientProxy } from '@nestjs/microservices';
-import { PaymentsCreateChargeDto } from './dto/payments-create-charge.dto';
+
+import { NOTIFICATIONS_SERVICE, PaymentsCreateChargeDto } from '@app/common';
 
 @Injectable()
 export class PaymentsService {
+  private readonly logger = new Logger(PaymentsService.name);
   private readonly stripe = new Stripe(
     this.configService.get('STRIPE_SECRET_KEY'),
     {
       apiVersion: '2022-11-15',
     },
   );
+
   constructor(
     private readonly configService: ConfigService,
     @Inject(NOTIFICATIONS_SERVICE)
@@ -32,6 +34,10 @@ export class PaymentsService {
       payment_method_types: ['card'],
       confirm: true,
     });
+
+    this.logger.log(
+      `Sending a 'notify_email' event to the notification service to notify user of email: ${email} for payment success`,
+    );
 
     this.notificationsService.emit('notify_email', {
       email,

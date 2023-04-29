@@ -1,15 +1,19 @@
-import { Controller, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Logger, UsePipes, ValidationPipe } from '@nestjs/common';
+import { GrpcMethod } from '@nestjs/microservices';
+import { PaymentsCreateChargeDto } from '@app/common';
+
 import { PaymentsService } from './payments.service';
-import { MessagePattern, Payload } from '@nestjs/microservices';
-import { PaymentsCreateChargeDto } from './dto/payments-create-charge.dto';
+import { PAYMENTS_PROTO_SERVICE } from './proto';
 
 @Controller()
 export class PaymentsController {
+  private readonly logger = new Logger(PaymentsController.name);
   constructor(private readonly paymentsService: PaymentsService) {}
-
-  @MessagePattern('create_charge')
+  @GrpcMethod(PAYMENTS_PROTO_SERVICE, 'CreateCharge')
   @UsePipes(new ValidationPipe())
-  async createCharge(@Payload() data: PaymentsCreateChargeDto) {
-    return await this.paymentsService.createCharge(data);
+  async createCharge(data: PaymentsCreateChargeDto) {
+    this.logger.log('CreateCharge gRPC method Invoked');
+    const response = await this.paymentsService.createCharge(data);
+    return { id: response.id };
   }
 }

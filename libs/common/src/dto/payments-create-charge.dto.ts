@@ -1,4 +1,4 @@
-import { CreateChargeDto } from '@app/common';
+import { CreateChargeDto } from './create-charge.dto';
 import { IsEmail, IsNotEmpty } from 'class-validator';
 
 export class PaymentsCreateChargeDto extends CreateChargeDto {

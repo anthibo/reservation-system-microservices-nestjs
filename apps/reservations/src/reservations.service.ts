@@ -1,37 +1,51 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { ClientGrpc } from '@nestjs/microservices';
+import { map } from 'rxjs';
+
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { ReservationsRepository } from './reservations.repository';
 import { PAYMENTS_SERVICE, UserDto } from '@app/common';
-import { ClientProxy } from '@nestjs/microservices';
-import { map } from 'rxjs';
+import { PaymentsGRPCService } from './proto';
 
 @Injectable()
-export class ReservationsService {
+export class ReservationsService implements OnModuleInit {
   constructor(
     private readonly reservationRepository: ReservationsRepository,
-    @Inject(PAYMENTS_SERVICE) private readonly paymentService: ClientProxy,
+    @Inject(PAYMENTS_SERVICE) private readonly grpcClient: ClientGrpc,
   ) {}
+
+  private paymentsService: PaymentsGRPCService;
+
+  onModuleInit() {
+    this.paymentsService = this.grpcClient.getService('PaymentsService');
+    if (!this.paymentsService) {
+      console.log('Failed to get payments service');
+    } else {
+      console.log(this.paymentsService);
+      console.log(Object.keys(this.paymentsService));
+      console.log('payments service configured');
+    }
+  }
 
   async create(
     createReservationDto: CreateReservationDto,
     { email, _id: userId }: UserDto,
   ) {
-    return this.paymentService
-      .send('create_charge', {
-        ...createReservationDto.charge,
-        email,
-      })
-      .pipe(
-        map(async (response) => {
-          return await this.reservationRepository.create({
-            ...createReservationDto,
-            invoiceId: response.id,
-            timestamp: new Date(),
-            userId,
-          });
-        }),
-      );
+    const grpcRequestBody = {
+      ...createReservationDto.charge,
+      email,
+    };
+    return this.paymentsService.createCharge(grpcRequestBody).pipe(
+      map(async ({ id: invoiceId }) => {
+        return await this.reservationRepository.create({
+          ...createReservationDto,
+          timestamp: new Date(),
+          userId,
+          invoiceId,
+        });
+      }),
+    );
   }
 
   async findAll() {
