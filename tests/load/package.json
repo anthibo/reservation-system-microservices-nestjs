@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack",
-    "test": "pnpm build && k6 run ./dist/test.main.js"
-  },
+    "test": "pnpm build && k6 run --out csv=test_results_tcp.csv ./dist/test.main.js"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
