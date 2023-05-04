@@ -2,16 +2,16 @@
 import { faker } from '@faker-js/faker';
 
 export const generateReservation = () => ({
-  startDate: faker.date.past,
-  endDate: faker.date.future,
+  startDate: '02-01-2023',
+  endDate: '04-01-2023',
   placeId: faker.datatype.uuid(),
   charge: {
-    amount: faker.random.numeric(),
+    amount: faker.datatype.number(),
     card: {
-      cvc: faker.finance.creditCardCVV,
-      exp_month: faker.datatype.number({ min: 1, max: 12 }),
+      cvc: faker.finance.creditCardCVV(),
+      exp_month: 12,
       exp_year: faker.date.future().getFullYear(),
-      number: faker.finance.creditCardNumber(),
+      number: '4242 4242 4242 4242',
     },
   },
 });

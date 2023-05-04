@@ -2,58 +2,56 @@ import http from 'k6/http';
 import { check } from 'k6';
 
 import { generateReservation } from './generators/reservation';
+import { generateCredentials } from './generators/credentials';
 
 // Load test: Ramping virtual(vUs) users up and down
-// in 0 - 1m -> from 1 user to 10 users
-// in 1 - 3m -> from 10 users to 50 users
-// in 3m - 6m -> from 50 users to 100 users
-// in 6m - 8m -> from 100 users to 50 users
-// in 8m - 9m -> from 50 users to 10 users
-// in 9m - 10m -> from 10 users to 1 user
-// in 10m - 10m30s -> from 1 user to 200 users (Spike test)
+// in 0 - 30s -> from 1 user to 5 users
+// in 30s - 1:30 -> from 5 users to 10 users
+// in 1:30 - 2:00 -> from 10 users to 100 users (Spike test)
+// in 2:00 - 3:00 -> from 100 users to 10 users (Ramp down)
 export let options = {
   stages: [
+    { duration: '30s', target: 5 },
     { duration: '1m', target: 10 },
-    { duration: '2m', target: 50 },
-    // { duration: '3m', target: 100 },
-    // { duration: '2m', target: 50 },
-    // { duration: '1m', target: 10 },
-    // { duration: '30s', target: 200, rampUp: '10s', rampDown: '10s' },
+    { duration: '30s', target: 100 },
+    { duration: '1m', target: 10 },
   ],
-  thresholds: {
-    // Count: Incorrect content cannot be returned more than 99 times.
-    Errors: ['count<10']
-  }
 };
 
 const contentTypeHeader = { 'Content-Type': 'application/json' };
 
 export default function () {
   const credentialsPayload = registerUser();
-  const jwtToken = loginUser(credentialsPayload);
-  const reservation = generateReservation();
+  const { token: jwtToken } = loginUser(credentialsPayload);
+
+  const reservation = JSON.stringify(generateReservation());
+  console.log(reservation);
+
   const headers = {
     'Content-Type': 'application/json',
-    Authentication: jwtToken,
+    authentication: jwtToken,
   };
-
-  const requestRes = http.post(
+  console.log(headers);
+  const createReservationResponse = http.post(
     'http://34.102.159.133/reservations/',
     reservation,
-    headers,
+    { headers },
   );
-  const responseTime = requestRes.timings.duration;
+  const responseTime = createReservationResponse.timings.duration;
 
-  check(requestRes, { 'Request status is 200': (r) => r.status === 200 });
+  check(createReservationResponse, {
+    'Create Reservation Request status is 201': (r) => r.status === 201,
+  });
 
+  console.log(
+    `Reservation Response status: ${createReservationResponse.status}`,
+  );
+  console.log(`Reservation response body:`, createReservationResponse.body);
   console.log(`Response time: ${responseTime} ms`);
 }
 
 function registerUser() {
-  const credentialsPayload = JSON.stringify({
-    email: `user${__VU}@example.com`,
-    password: 'password123',
-  });
+  const credentialsPayload = JSON.stringify(generateCredentials());
 
   console.log(credentialsPayload);
 
@@ -63,7 +61,7 @@ function registerUser() {
     { headers: contentTypeHeader },
   );
   console.log(registerRes.status);
-  check(registerRes, { 'Register status is 200': (r) => r.status === 200 });
+  check(registerRes, { 'Register status is 201': (r) => r.status === 201 });
   return credentialsPayload;
 }
 
@@ -75,6 +73,6 @@ function loginUser(credentialsPayload) {
   );
   console.log(loginRes.status);
   console.log(loginRes.body);
-  check(loginRes, { 'Login status is 200': (r) => r.status === 200 });
+  check(loginRes, { 'Login status is 201': (r) => r.status === 201 });
   return { token: loginRes.body };
 }
