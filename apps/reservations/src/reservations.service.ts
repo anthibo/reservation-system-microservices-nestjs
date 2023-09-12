@@ -5,8 +5,9 @@ import { map } from 'rxjs';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { ReservationsRepository } from './reservations.repository';
-import { PAYMENTS_SERVICE, UserDto } from '@app/common';
+import { PAYMENTS_SERVICE, User } from '@app/common';
 import { PaymentsGRPCService } from './proto';
+import { Reservation } from './models/reservation.entity';
 
 @Injectable()
 export class ReservationsService implements OnModuleInit {
@@ -30,7 +31,7 @@ export class ReservationsService implements OnModuleInit {
 
   async create(
     createReservationDto: CreateReservationDto,
-    { email, _id: userId }: UserDto,
+    { email, id: userId }: User,
   ) {
     const grpcRequestBody = {
       ...createReservationDto.charge,
@@ -38,12 +39,13 @@ export class ReservationsService implements OnModuleInit {
     };
     return this.paymentsService.createCharge(grpcRequestBody).pipe(
       map(async ({ id: invoiceId }) => {
-        return await this.reservationRepository.create({
+        const reservation = new Reservation({
           ...createReservationDto,
           timestamp: new Date(),
           userId,
           invoiceId,
         });
+        return await this.reservationRepository.create(reservation);
       }),
     );
   }
@@ -52,18 +54,18 @@ export class ReservationsService implements OnModuleInit {
     return await this.reservationRepository.find({});
   }
 
-  async findOne(_id: string) {
-    return await this.reservationRepository.findOne({ _id });
+  async findOne(id: number) {
+    return await this.reservationRepository.findOne({ id });
   }
 
-  async update(_id: string, updateReservationDto: UpdateReservationDto) {
+  async update(id: number, updateReservationDto: UpdateReservationDto) {
     return await this.reservationRepository.findOneAndUpdate(
-      { _id },
-      { $set: updateReservationDto },
+      { id },
+      updateReservationDto,
     );
   }
 
-  async remove(_id: string) {
-    return await this.reservationRepository.findOneAndDelete({ _id });
+  async remove(id: number) {
+    return await this.reservationRepository.findOneAndDelete({ id });
   }
 }
