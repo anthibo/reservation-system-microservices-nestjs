@@ -11,13 +11,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AuthModule);
   const configService = app.get(ConfigService);
 
-  const tcpPort = configService.get('TCP_PORT');
+  // const tcpPort = configService.get('TCP_PORT');
 
   app.connectMicroservice({
-    transport: Transport.TCP,
+    transport: Transport.RMQ,
     options: {
-      host: '0.0.0.0',
-      port: tcpPort,
+      urls: [configService.getOrThrow('RABBITMQ_URI')],
+      queue: 'auth', // name of the queue
     },
   });
 

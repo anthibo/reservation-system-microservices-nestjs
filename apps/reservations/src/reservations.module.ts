@@ -38,10 +38,10 @@ import { join } from 'path';
       {
         name: AUTH_SERVICE,
         useFactory: (configService: ConfigService) => ({
-          transport: Transport.TCP,
+          transport: Transport.RMQ,
           options: {
-            host: configService.get('AUTH_HOST'),
-            port: configService.get('AUTH_PORT'),
+            urls: [configService.getOrThrow<string>('RABBITMQ_URI')],
+            queue: 'auth',
           },
         }),
         inject: [ConfigService],

@@ -3,7 +3,6 @@ import { PaymentsModule } from './payments.module';
 import { Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from 'nestjs-pino';
-import { number } from 'joi';
 import { PAYMENTS_PROTO_PACKAGE } from './proto';
 import { join } from 'path';
 
